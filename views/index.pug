@@ -33,15 +33,24 @@
 //-     +tooltip_wrapper(run)
 //-       block
 
+mixin error_message(obj)
+  - const errorStr = JSON.stringify(obj, null, 2)
+  .alert.alert-danger(role="alert")
+    b Error:
+    pre= errorStr
+
 mixin tree_entries(entries)
   ul
     each entry in entries
       li
-        - let showName = `[${entry.type}] ${entry.name}`;
-        - if (entry.type == 'file') showName += ` (${entry.path})`
-        div= showName
+        //- - let showName = `[${entry.type}] ${entry.name}`;
+        //- - if (entry.type == 'file') showName += ` (${entry.path})`
+        //- div= showName
         if entry.type == 'dir'
+          div= entry.name
           +tree_entries(entry.entries)
+        else
+          a(href='/?p='+entry.path)= entry.name
 
 
 doctype html
@@ -67,17 +76,45 @@ html(lang="en")
         padding-left: 1.1rem;
       }
   body
-    h1 mdnotes
+    .container
+      h1 mdnotes
 
-    - var treeStr = JSON.stringify(tree, null, 2);
-    pre= treeStr
+      //- - var treeStr = JSON.stringify(tree, null, 2);
+      //- pre= treeStr
 
-    +tree_entries(tree)
+      +tree_entries(tree)
+
+      if content
+        if content.error
+          +error_message(content.error)
+        #md-text(style={ display: 'none' })= content.result
+        #md-render
+        
+      small
+        a(href='https://github.com/showdownjs/showdown/wiki/Emojis') emojis
+        a(href='https://github.github.com/gfm/') flavored markdown
 
     script(src='https://code.jquery.com/jquery-3.6.0.min.js' integrity='sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=' crossorigin='anonymous')
     script(src='https://code.jquery.com/ui/1.13.1/jquery-ui.min.js' integrity='sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=' crossorigin='anonymous')
     script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js' integrity='sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p' crossorigin='anonymous')
+    script(src='https://cdn.jsdelivr.net/npm/showdown@2.0.0/dist/showdown.min.js')
+    script(src='https://cdn.jsdelivr.net/npm/showdown-github@1.0.0/dist/showdown-github.min.js')
+
     script.
       window.addEventListener('load', () => {
         $('[data-toggle="tooltip"]').tooltip();
+
+        window.mdConverter = new showdown.Converter({
+          extensions: ['github'],
+          emoji: true,
+          simpleLineBreaks: true,
+          tables: true,
+          parseImgDimensions: true,
+          headerLevelStart: 2,
+        });
+        mdConverter.setFlavor('github');
+        const mdText = $('#md-text').text();
+        if (mdText) {
+          $('#md-render').html(mdConverter.makeHtml(mdText));
+        }
       });

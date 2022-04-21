@@ -33,7 +33,8 @@ class Files {
 
   read(path) {
     try {
-      return { result: fs.readFileSync(path, "utf-8") };
+      const fullPath = filepath.join(storagePath, path);
+      return { result: fs.readFileSync(fullPath, "utf-8") };
     } catch (error) {
       return { error };
     }
@@ -41,7 +42,8 @@ class Files {
 
   save(path, content) {
     try {
-      fs.writeFileSync(path, content);
+      const fullPath = filepath.join(storagePath, path);
+      fs.writeFileSync(fullPath, content);
       return { result: "ok" };
     } catch (error) {
       return { error };
@@ -55,11 +57,12 @@ class Cached {
   }
 
   get(createAction) {
-    if (!this.cached || this.cachedTime.isBefore(this.cacheInvalidAfter)) {
+    const now = moment();
+    if (!this.cached || now.isAfter(this.cacheInvalidAfter)) {
       this.cached = createAction();
-      // console.log("no cache. creating:", this.cached);
-      this.cachedTime = moment();
-      this.cacheInvalidAfter = moment(this.cachedTime).add(this.cacheTTL);
+      console.log("refreshing cache");
+      this.cachedTime = now;
+      this.cacheInvalidAfter = moment(this.cachedTime).add(this.ttl);
     } else {
       // console.log("retriving value from cache:", this.cached);
     }

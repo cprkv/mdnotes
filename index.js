@@ -7,8 +7,11 @@ const app = express();
 app.set("view engine", "pug");
 
 app.get("/", (req, res) => {
-  const tree = files.tree();
-  res.render("index", { tree });
+  const params = { tree: files.tree() };
+  if (req.query.p) {
+    params.content = files.read(req.query.p);
+  }
+  res.render("index", params);
 });
 
 app.listen(config.listen, () => {
