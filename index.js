@@ -8,7 +8,6 @@ app.set("view engine", "pug");
 
 app.get("/", (req, res) => {
   const tree = files.tree();
-  console.log("tree:", tree);
   res.render("index", { tree });
 });
 
