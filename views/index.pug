@@ -33,6 +33,15 @@
 //-     +tooltip_wrapper(run)
 //-       block
 
+mixin tree_entries(entries)
+  ul
+    each entry in entries
+      li
+        div= `[${entry.type}] ${entry.name}`
+        if entry.type == 'dir'
+          +tree_entries(entry.entries)
+
+
 doctype html
 html(lang="en")
   head
@@ -57,6 +66,11 @@ html(lang="en")
       }
   body
     h1 mdnotes
+
+    - var treeStr = JSON.stringify(tree, null, 2);
+    pre= treeStr
+
+    +tree_entries(tree)
 
     script(src='https://code.jquery.com/jquery-3.6.0.min.js' integrity='sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=' crossorigin='anonymous')
     script(src='https://code.jquery.com/ui/1.13.1/jquery-ui.min.js' integrity='sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=' crossorigin='anonymous')

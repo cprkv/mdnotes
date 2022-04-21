@@ -4,23 +4,25 @@ const fs = require("fs");
 
 function* getFiles(dir) {
   const dirents = fs.readdirSync(dir, { withFileTypes: true });
+  console.log("getting files...", dirents);
   for (const dirent of dirents) {
     const res = filepath.resolve(dir, dirent.name);
+
     if (dirent.isDirectory()) {
-      yield* getFiles(res);
+      yield { name: dirent.name, type: 'dir', entries: [...getFiles(res)] };
     } else {
-      yield res;
+      yield { name: dirent.name, type: 'file', path: res };
     }
   }
 }
 
 class Files {
   constructor(storagePath) {
-    self.storagePath = storagePath;
+    this.storagePath = storagePath;
   }
 
-  files() {
-    return getFiles(self.storagePath);
+  tree() {
+    return [...getFiles(this.storagePath)];
   }
 
   read(path) {
@@ -49,21 +51,34 @@ class Cached {
   get(createAction) {
     if (!this.cached || this.cachedTime.isBefore(this.cacheInvalidAfter)) {
       this.cached = createAction();
+      // console.log("no cache. creating:", this.cached);
       this.cachedTime = moment();
       this.cacheInvalidAfter = moment(this.cachedTime).add(this.cacheTTL);
+    } else {
+      // console.log("retriving value from cache:", this.cached);
     }
     return this.cached;
+  }
+
+  clear() {
+    this.cached = null;
   }
 }
 
 class FilesCached extends Files {
   constructor(storagePath, ttl) {
     super(storagePath);
-    this.cachedFiled = new Cached(ttl);
+    this.cachedTree = new Cached(ttl);
   }
 
-  files() {
-    return this.cachedFiled.get(() => super.files());
+  tree() {
+    return this.cachedTree.get(() => super.tree());
+  }
+
+  save(path, content) {
+    const res = super.save(path, content);
+    this.cachedTree.clear();
+    return res;
   }
 }
 
