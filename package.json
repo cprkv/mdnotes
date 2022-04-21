@@ -1,8 +1,11 @@
 {
   "name": "mdnotes",
   "version": "1.0.0",
-  "description": "",
+  "description": "markdown notes server",
   "main": "index.js",
+  "bin": {
+    "mdnotes": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,11 +14,14 @@
     "url": "git@git.vydra.su:vadik/mdnotes.git"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "easy-config": "^0.6.2",
     "express": "^4.17.3",
     "moment": "^2.29.3",
     "pug": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=11.0.0"
   }
 }

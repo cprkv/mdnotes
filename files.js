@@ -1,8 +1,9 @@
 const filepath = require("path");
 const moment = require("moment");
 const fs = require("fs");
+const config = require("easy-config");
 
-const storagePath = filepath.join(__dirname, "storage");
+const storagePath = filepath.resolve(config.storage);
 
 function* getFiles(dir) {
   const dirents = fs.readdirSync(dir, { withFileTypes: true });
