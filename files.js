@@ -5,7 +5,7 @@ const config = require("easy-config");
 
 const storagePath = filepath.resolve(config.storage);
 
-function* getFiles(dir) {
+function* getFilesInner(dir) {
   const dirents = fs.readdirSync(dir, { withFileTypes: true });
 
   for (const dirent of dirents) {
@@ -14,8 +14,11 @@ function* getFiles(dir) {
     if (dirent.isDirectory()) {
       const name = dirent.name;
       const type = "dir";
-      const entries = [...getFiles(res)];
-      yield { name, type, entries };
+      const path = res
+        .substring(storagePath.length + 1) // trim prefix
+        .replace(new RegExp("\\" + filepath.sep, "g"), "/"); // replace windows \ to normal web /
+      const entries = [...getFilesInner(res)];
+      yield { name, type, path, entries };
     } else if (dirent.name.endsWith(".md")) {
       const name = filepath.parse(dirent.name).name;
       const type = "file";
@@ -25,6 +28,13 @@ function* getFiles(dir) {
       yield { name, type, path };
     }
   }
+}
+
+function* getFiles(dir) {
+  const name = "/";
+  const type = "dir";
+  const entries = [...getFilesInner(dir)];
+  yield { name, type, entries, path: "./" };
 }
 
 class Files {
@@ -44,6 +54,28 @@ class Files {
   save(path, content) {
     try {
       const fullPath = filepath.join(storagePath, path);
+      fs.writeFileSync(fullPath, content);
+      return { result: "ok" };
+    } catch (error) {
+      return { error };
+    }
+  }
+
+  createDir(path, name) {
+    try {
+      const fullPath = filepath.join(storagePath, path, name);
+      fs.mkdirSync(fullPath);
+      return { result: "ok" };
+    } catch (error) {
+      return { error };
+    }
+  }
+
+  createFile(path, name) {
+    try {
+      const realName = name.endsWith(".md") ? name : name + ".md";
+      const fullPath = filepath.join(storagePath, path, realName);
+      const content = `# ${name}\n\n`;
       fs.writeFileSync(fullPath, content);
       return { result: "ok" };
     } catch (error) {
@@ -87,6 +119,18 @@ class FilesCached extends Files {
 
   save(path, content) {
     const res = super.save(path, content);
+    this.cachedTree.clear();
+    return res;
+  }
+
+  createDir(path, name) {
+    const res = super.createDir(path, name);
+    this.cachedTree.clear();
+    return res;
+  }
+
+  createFile(path, name) {
+    const res = super.createFile(path, name);
     this.cachedTree.clear();
     return res;
   }

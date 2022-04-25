@@ -52,6 +52,41 @@ app.put("/edit", (req, res) => {
   res.status(200).json({});
 });
 
+app.post("/dirs", (req, res) => {
+  console.log("creating dir");
+  const name = req.body.name;
+  const path = req.query.p;
+  if (!name) {
+    return res.status(400).json({ error: "name missing in request body" });
+  }
+  if (!path) {
+    return res.status(400).json({ error: "path missing in request query" });
+  }
+  const { error } = files.createDir(path, name);
+  if (error) {
+    return res.status(500).json({ error });
+  }
+  res.status(200).json({});
+});
+
+app.post("/files", (req, res) => {
+  console.log("creating file");
+  const name = req.body.name;
+  const path = req.query.p;
+  if (!name) {
+    return res.status(400).json({ error: "name missing in request body" });
+  }
+  if (!path) {
+    return res.status(400).json({ error: "path missing in request query" });
+  }
+  const { error } = files.createFile(path, name);
+  if (error) {
+    return res.status(500).json({ error });
+  }
+  res.status(200).json({});
+});
+
+
 app.listen(config.listen, () => {
   console.log(`mdnotes listening on http://localhost:${config.listen}`);
 });

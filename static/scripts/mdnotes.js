@@ -2,9 +2,48 @@ window.addEventListener("load", onPageLoad);
 
 function onPageLoad() {
   $('[data-toggle="tooltip"]').tooltip();
+  $(".btn-tree").popover({ html: true });
+  $(".add-dir-tree").each(function () {
+    const el = $(this);
+    const path = el.attr("mdnotes-path");
+    const inputId = uid();
+    const form = `
+      <div class="form-inline">
+        <input class="form-control form-control-sm" type="text" placeholder="name" id="${inputId}">
+        <button class="btn btn-primary btn-sm" onclick="createDir('${path}', '${inputId}')">create</button>
+      </div>
+    `;
+    el.attr("data-content", form);
+  });
+  $(".add-file-tree").each(function () {
+    const el = $(this);
+    const path = el.attr("mdnotes-path");
+    const inputId = uid();
+    const form = `
+      <div class="form-inline">
+        <input class="form-control form-control-sm" type="text" placeholder="name" id="${inputId}">
+        <button class="btn btn-primary btn-sm" onclick="createFile('${path}', '${inputId}')">create</button>
+      </div>
+    `;
+    el.attr("data-content", form);
+  });
   createMdConverter();
   renderMarkdown();
   createEditor();
+}
+
+function createDir(path, inputId) {
+  const name = $(`#${inputId}`).val();
+  sendData("POST", `/dirs?p=${path}`, { name })
+    .then(() => showSuccess("created!"))
+    .catch(showError);
+}
+
+function createFile(path, inputId) {
+  const name = $(`#${inputId}`).val();
+  sendData("POST", `/files?p=${path}`, { name })
+    .then(() => showSuccess("created!"))
+    .catch(showError);
 }
 
 function createMdConverter() {
@@ -121,4 +160,10 @@ async function sendData(method, url, data) {
     body: JSON.stringify(data),
   });
   return response.json();
+}
+
+function uid() {
+  return (
+    "i" + Date.now().toString(36) + Math.random().toString(36).substring(2)
+  );
 }

@@ -6,14 +6,25 @@ mixin error_message(obj)
     pre= errorStr
 
 mixin tree_entries(entries)
-  ul
+  ul.tree
     each entry in entries
       li
         if entry.type == 'dir'
-          div= entry.name
+          .d-flex.justify-content-between.dir-tree
+            .d-flex
+              i.bi.bi-folder.mr-1
+              div= entry.name
+            .d-flex
+              a.btn.btn-link.ml-3.btn-tree.add-dir-tree(tabindex="0" role="button" data-toggle="popover" data-trigger="click" title="add directory" data-content="" mdnotes-path=entry.path)
+                i.bi.bi-folder-plus
+              a.btn.btn-link.ml-1.btn-tree.add-file-tree(tabindex="0" role="button" data-toggle="popover" data-trigger="click" title="add file" data-content="" mdnotes-path=entry.path)
+                i.bi.bi-file-earmark-plus
           +tree_entries(entry.entries)
         else
-          a(href='/?p='+entry.path)= entry.name
+          div
+            i.bi.bi-markdown.mr-1
+            a.d-inline(href='/?p='+entry.path)= entry.name
+          
 
 mixin error_container()
   #errors
