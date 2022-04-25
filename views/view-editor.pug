@@ -3,10 +3,9 @@ extends layout.pug
 block container
   .mt-4
     .mb-3.d-flex.justify-content-between.align-items-center
-      #filepath= path
+      a(href='/?p='+path)= path
       .d-flex
         button.d-inline.btn.mx-1#editor-delete.btn-danger(type="button") delete
-        button.d-inline.btn.mx-1#editor-cancel.btn-danger(type="button") cancel
         button.d-inline.btn.mx-1#editor-save.btn-primary(type="button") save
     +error_container()
     if content.error

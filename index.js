@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const express = require("express");
+const bodyParser = require("body-parser");
 const filepath = require("path");
 const config = require("easy-config");
 const files = require("./files");
@@ -8,26 +9,47 @@ console.log("config:", config);
 
 const app = express();
 
+app.use(bodyParser.json());
+app.use(express.static(filepath.join(__dirname, "static")));
+
 app.set("view engine", "pug");
 app.set("views", filepath.join(__dirname, "views"));
 
-app.use(express.static(filepath.join(__dirname, "static")));
-
 app.get("/", (req, res) => {
+  const path = req.query.p;
   const params = { tree: files.tree() };
-  if (req.query.p) {
-    params.content = files.read(req.query.p);
+  if (path) {
+    params.content = files.read(path);
+    params.path = path;
   }
   res.render("view-note", params);
 });
 
 app.get("/edit", (req, res) => {
+  const path = req.query.p;
   const params = { tree: files.tree() };
-  if (req.query.p) {
-    params.content = files.read(req.query.p);
-    params.path = req.query.p;
+  if (path) {
+    params.content = files.read(path);
+    params.path = path;
   }
   res.render("view-editor", params);
+});
+
+app.put("/edit", (req, res) => {
+  console.log("saving request");
+  const content = req.body.content;
+  const path = req.query.p;
+  if (!content) {
+    return res.status(400).json({ error: "content missing in request body" });
+  }
+  if (!path) {
+    return res.status(400).json({ error: "path missing in request query" });
+  }
+  const { error } = files.save(path, content);
+  if (error) {
+    return res.status(500).json({ error });
+  }
+  res.status(200).json({});
 });
 
 app.listen(config.listen, () => {

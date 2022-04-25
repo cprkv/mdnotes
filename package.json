@@ -16,6 +16,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.20.0",
     "easy-config": "^0.6.2",
     "express": "^4.17.3",
     "moment": "^2.29.3",

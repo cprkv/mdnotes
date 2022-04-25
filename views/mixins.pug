@@ -16,9 +16,7 @@ mixin tree_entries(entries)
           a(href='/?p='+entry.path)= entry.name
 
 mixin error_container()
-  #errors.errors-hidden.alert.alert-danger(role="alert")
-    b#error-name none
-    pre#error-details.mt-1.mb-0
+  #errors
 
 //- mixin modal_wrapper(run)
 //-   - const attrs = run.tooltip ? {'data-toggle': 'tooltip', title: run.tooltip} : {};

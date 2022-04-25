@@ -32,6 +32,6 @@ li > p {
     "Consolas", "source-code-pro", monospace;
 }
 
-#errors {
-  display: hidden;
-}
+/* #errors {
+  display: none;
+} */

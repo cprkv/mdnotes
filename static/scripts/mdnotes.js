@@ -45,22 +45,63 @@ function createEditor(element) {
   // #editor-cancel
   // #editor-save
 
-  showError("aboba");
-
-  $("#editor-save").click(function () {
-    // alert("Handler for .click() called.");
-    console.log("saving...");
-    const content = editor.getValue();
-    const query = new URLSearchParams(location.search);
-    const path = query.get("p");
-    if (!path || path.length == 0) {
-      return showError("path empty");
-    }
-  });
+  $("#editor-save").click(saveNote);
 }
 
 function showError(error) {
-  $("#error-name").text(`error happend at ${new Date().toISOString()}:`);
-  $("#error-details").text(error);
-  $("#errors").css("display", "block");
+  console.error(error);
+  showMessage("danger", "Error!", error);
+}
+
+function showSuccess(title, message) {
+  console.log(title, message);
+  showMessage("success", title, message);
+
+  clearTimeout(window.closeSuccessTimeout);
+  window.closeSuccessTimeout = setTimeout(() => {
+    $(".alert-success").alert("close");
+  }, 3000);
+}
+
+function showMessage(type, title, message) {
+  if (typeof message !== "string") {
+    message = JSON.stringify(message, null, 2);
+  }
+
+  const alertHtml = `
+    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+      <strong>${title}</strong>${
+    message ? `<pre class="mb-0">${message}</pre>` : ""
+  }
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  `;
+  $("#errors").append(alertHtml);
+  $(".alert").alert();
+}
+
+function saveNote() {
+  console.log("saving...");
+  const content = editor.getValue();
+  const query = new URLSearchParams(location.search);
+  const path = query.get("p");
+  if (!path || path.length == 0) {
+    return showError("path empty");
+  }
+
+  sendData("PUT", `/edit?p=${path}`, { content })
+    .then(() => showSuccess("saved!"))
+    .catch(showError);
+}
+
+async function sendData(method, url, data) {
+  const response = await fetch(url, {
+    method,
+    cache: "no-cache",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return response.json();
 }
