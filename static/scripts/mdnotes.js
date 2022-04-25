@@ -2,21 +2,9 @@ window.addEventListener("load", onPageLoad);
 
 function onPageLoad() {
   $('[data-toggle="tooltip"]').tooltip();
-
-  const mdText = $("#md-text").text();
-  if (mdText) {
-    createMdConverter();
-    $("#md-render").html(mdConverter.makeHtml(mdText));
-    const mdHeader = $("#md-render > :header:first-child").text();
-    if (mdHeader.length) {
-      document.title = mdHeader;
-    }
-  }
-
-  const editorEl = $("#editor");
-  if (editorEl.length) {
-    createEditor("editor");
-  }
+  createMdConverter();
+  renderMarkdown();
+  createEditor();
 }
 
 function createMdConverter() {
@@ -31,20 +19,49 @@ function createMdConverter() {
   mdConverter.setFlavor("github");
 }
 
-function createEditor(element) {
-  window.editor = ace.edit(element, {
+function renderMarkdown() {
+  const mdText = $("#md-text").text();
+  if (!mdText) {
+    return;
+  }
+
+  $("#md-render").html(mdConverter.makeHtml(mdText));
+
+  const mdHeader = $("#md-render > :header:first-child").text();
+  if (mdHeader.length) {
+    document.title = mdHeader;
+  }
+
+  $("table").each(function () {
+    const el = $(this);
+    if (!el.hasClass("table")) {
+      el.addClass("table");
+    }
+  });
+
+  $("blockquote").each(function () {
+    const el = $(this);
+    if (!el.hasClass("blockquote")) {
+      el.addClass("blockquote");
+    }
+  });
+}
+
+function createEditor() {
+  if (!$("#editor").length) {
+    return;
+  }
+  window.editor = ace.edit("editor", {
     theme: "ace/theme/textmate",
     mode: "ace/mode/markdown",
     autoScrollEditorIntoView: true,
     maxLines: 100,
     tabSize: 2,
-    // useSoftTabs: true,
-    // useWrapMode: true,
+    // TODO: useSoftTabs: true,
+    // TODO: useWrapMode: true,
   });
-  // #editor-delete
-  // #editor-cancel
-  // #editor-save
 
+  // TODO: #editor-delete
   $("#editor-save").click(saveNote);
 }
 
