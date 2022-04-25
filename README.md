@@ -20,4 +20,4 @@ mdnotes --listen=3000 --storage=.
 - [ ] fix inline code blocks (add `.code-inline` class for `<code>` blocks inside `<pre>`)
 - [ ] code highliter
 - [ ] deleting notes
-- [ ] creating notes and directories
+- [x] creating notes and directories
