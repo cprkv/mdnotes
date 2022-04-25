@@ -1,0 +1,10 @@
+extends layout-with-tree.pug
+
+block content
+  +error_container()
+  if content
+    if content.error
+      +error_message(content.error)
+    else
+      #md-text(style={ display: 'none' })= content.result
+      #md-render

@@ -1,0 +1,11 @@
+extends layout.pug
+
+block container
+  .row
+    .col-lg-1.col-md-0
+    .col-lg-3.col-md-3.pt-3
+      h1.mb-4 mdnotes
+      +tree_entries(tree)
+    .col-lg-6.col-md-8.pt-4
+      block content
+    .col-lg-2.col-md-0

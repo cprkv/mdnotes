@@ -1,0 +1,38 @@
+include mixins.pug
+
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title mdnotes
+    link(rel='apple-touch-icon' sizes='180x180' href='/icons/apple-touch-icon.png')
+    link(rel='icon' type='image/png' sizes='32x32' href='/icons/favicon-32x32.png')
+    link(rel='icon' type='image/png' sizes='16x16' href='/icons/favicon-16x16.png')
+    link(rel='manifest' href='/site.webmanifest')
+    link(href='/css/bootstrap.min.css' rel='stylesheet')
+    link(href='/css/bootstrap-icons.css' rel='stylesheet')
+    link(href='/css/styles.css' rel='stylesheet')
+  body
+    .container(style={ 'min-height': '95vh' })
+      block container
+
+    .container.mb-4
+      .row
+        .col-sm-1
+        .col-sm-8.pt-3
+          small
+            a(href='https://github.com/showdownjs/showdown/wiki/Emojis') emojis
+            |  • 
+            a(href='https://github.github.com/gfm/') flavored markdown
+
+    script(src='/scripts/jquery-3.6.0.min.js')
+    script(src='/scripts/jquery-ui.min.js')
+    script(src='/scripts/bootstrap.bundle.min.js')
+    script(src='/scripts/showdown.min.js')
+    script(src='/scripts/showdown-github.min.js')
+    script(src='/ace/ace.js')
+    script(src='/ace/mode-markdown.js')
+    script(src='/ace/theme-textmate.js')
+    script(src='/scripts/mdnotes.js')

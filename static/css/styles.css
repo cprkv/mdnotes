@@ -1,0 +1,37 @@
+.modal-lg,
+.modal-xl {
+  width: 80vw !important;
+  max-width: 1400px !important;
+}
+.modal-button {
+  vertical-align: top !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+ol,
+ul {
+  padding-left: 1.1rem;
+}
+p {
+  margin-bottom: 0.7rem;
+}
+li > p {
+  margin-bottom: 0;
+}
+/* #editor {
+  margin: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+} */
+
+#editor {
+  font-family: "Hasklig", "Anka/Coder", "Monaco", "Menlo", "Ubuntu Mono",
+    "Consolas", "source-code-pro", monospace;
+}
+
+#errors {
+  display: hidden;
+}

@@ -1,0 +1,41 @@
+
+mixin error_message(obj)
+  - const errorStr = JSON.stringify(obj, null, 2)
+  .alert.alert-danger(role="alert")
+    b Error:
+    pre= errorStr
+
+mixin tree_entries(entries)
+  ul
+    each entry in entries
+      li
+        if entry.type == 'dir'
+          div= entry.name
+          +tree_entries(entry.entries)
+        else
+          a(href='/?p='+entry.path)= entry.name
+
+mixin error_container()
+  #errors.errors-hidden.alert.alert-danger(role="alert")
+    b#error-name none
+    pre#error-details.mt-1.mb-0
+
+//- mixin modal_wrapper(run)
+//-   - const attrs = run.tooltip ? {'data-toggle': 'tooltip', title: run.tooltip} : {};
+//-   button.btn.btn-link.modal-button(type='button' data-bs-toggle='modal' data-bs-target=`#modal-${run.id}`)&attributes(attrs)
+//-     block
+//-   .modal.fade(tabindex='-1' role='dialog' id=`modal-${run.id}` aria-labelledby=`modal-label-${run.id}` aria-hidden='true')
+//-     .modal-dialog.modal-lg(role='document')
+//-       .modal-content
+//-         .modal-body
+//-           pre= run.modal
+//-         .modal-footer
+//-           button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
+
+//- mixin tooltip_wrapper(run)
+//-   if run.tooltip
+//-     span.d-inline-block(tabindex='0' data-toggle='tooltip' title=run.tooltip)
+//-       block
+//-   else
+//-     block
+
